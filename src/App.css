@@ -26,3 +26,32 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+
+// new 2 column stuff
+.container {
+    display: block;
+    position:absolute;
+    height:auto;
+    bottom:0;
+    top:0;
+    left:0;
+    right:0;
+    background-color:blue;
+}
+.column_wrap {position:relative;}
+
+.col_left {
+	background-color:#f4f4f4;
+	width:25%;
+	position:absolute;
+	left:0;top:0;
+	bottom:0;
+	height:auto;
+	display: block;
+	padding-left: 8px;
+}
+.col_right {
+	margin-left:26.25%;
+	margin-right: 4px;
+}
