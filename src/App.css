@@ -27,6 +27,28 @@
   to { transform: rotate(360deg); }
 }
 
+.new-room-button {
+    text-align: center;
+    font-size: 14px;
+    background-color: white;
+    color: black;
+    display: inline-block;
+		margin-left: 4px;
+}
+
+.new-room-button:hover {
+    cursor: pointer;
+    color: white;
+    background-color: rgb(210, 40, 123);
+}
+
+.new-room-button span {
+    line-height: 28px;
+}
+
+#new-room {
+  margin-top: 8px;
+}
 
 // new 2 column stuff
 .container {
