@@ -24,7 +24,9 @@ class RoomList extends React.Component {
   }
 
   handleRoomClick(index) {
-    console.log("handleRoomClick(): ", this.state.rooms[index]);
+    console.log("rooms: handleRoomClick(): ", this.state.rooms[index].val)
+    this.props.roomFocus(this.state.rooms[index].val)
+    console.log("after: ", this.props.roomFocus());
   }
 
   handleNewRoomChange(e) {
@@ -60,7 +62,7 @@ class RoomList extends React.Component {
         <div>
           {this.state.rooms.map((room, index) => {
             return (
-              <p key={room.key} onClick={() => this.handleRoomClick(index)}>
+              <p id="each-room" key={room.key} onClick={() => this.handleRoomClick(index)}>
                 {room.val}
               </p>
             )

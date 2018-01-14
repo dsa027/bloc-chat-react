@@ -2,9 +2,10 @@ import React, { Component } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import RoomList from './components/RoomList'
+import MessageList from './components/MessageList'
 import * as firebase from 'firebase'
 
-var config = {
+const config = {
     apiKey: "AIzaSyBUHr2EKZIigPukQmKmwvnJL2VXsOiXLvg",
     authDomain: "bloc-chat-angularjs-6e588.firebaseapp.com",
     databaseURL: "https://bloc-chat-angularjs-6e588.firebaseio.com",
@@ -15,6 +16,34 @@ var config = {
   firebase.initializeApp(config)
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+
+    console.log("in constructor");
+    this.state = {
+      room: '',
+    }
+    console.log("this.state", this.state);
+
+    this.roomFocus = this.roomFocus.bind(this)
+  }
+
+  componentWillMount() {
+    console.log("componentWillMount(): ", this.state);
+  }
+
+  roomFocus(room) {
+    console.log("roomFocus():", this.state);
+    if (room) {
+      console.log("have room param");
+      this.setState({room: room})
+    }
+    else {
+      console.log("don't have room param");
+      return this.state.room
+    }
+  }
+
   render() {
     return (
       <div className="container">
@@ -24,17 +53,15 @@ class App extends Component {
             <img src={logo} className="App-logo" alt="logo" />
             <h1 className="App-title">Bloc Chat</h1>
           </header>
-          <RoomList database={firebase}></RoomList>
+          <RoomList database={firebase} roomFocus={this.roomFocus}></RoomList>
         </div>
 
         {/* Right Column */}
         <div className="col_right">
-          <p className="App-intro">
-            To get started, edit <code>src/App.js</code> and save to reload.
-          </p>
+          <MessageList database={firebase} roomFocus={this.roomFocus}></MessageList>
         </div>
       </div>
-    );
+    )
   }
 }
 

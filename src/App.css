@@ -46,6 +46,10 @@
     line-height: 28px;
 }
 
+#each-room {
+  cursor: pointer;
+}
+
 #new-room {
   margin-top: 8px;
 }
@@ -76,4 +80,27 @@
 .col_right {
 	margin-left:26.25%;
 	margin-right: 4px;
+}
+
+// zebra stripe
+.zebra-stripe:nth-child(odd) {
+	background: white;
+}
+
+.zebra-stripe:nth-child(even) {
+	background: #f4f4f4;
+}
+
+.zebra-stripe {
+	line-height: 1.25rem;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+#right-justify {
+	float: right;
+}
+
+.bolded {
+  font-weight: bold;
 }
