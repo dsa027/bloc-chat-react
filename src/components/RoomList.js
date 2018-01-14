@@ -18,19 +18,15 @@ class RoomList extends React.Component {
         val: snapshot.val(),
         key: snapshot.key,
       }
-      console.log("from db, room: ", room);
       this.setState({rooms: this.state.rooms.concat(room)})
     })
   }
 
   handleRoomClick(index) {
-    console.log("rooms: handleRoomClick(): ", this.state.rooms[index].val)
     this.props.roomFocus(this.state.rooms[index].val)
-    console.log("after: ", this.props.roomFocus());
   }
 
   handleNewRoomChange(e) {
-    console.log("handleNewRoomChange(): ", e.target.value);
     this.setState({
       newRoomName: e.target.value,
     })
@@ -43,7 +39,6 @@ class RoomList extends React.Component {
     this.setState({
       newRoomName: '',
     })
-    console.log("add, state:", this.state);
   }
 
   render() {

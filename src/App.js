@@ -3,6 +3,7 @@ import logo from './logo.svg'
 import './App.css'
 import RoomList from './components/RoomList'
 import MessageList from './components/MessageList'
+import User from './components/User'
 import * as firebase from 'firebase'
 
 const config = {
@@ -19,28 +20,35 @@ class App extends Component {
   constructor(props) {
     super(props)
 
-    console.log("in constructor");
     this.state = {
       room: '',
     }
-    console.log("this.state", this.state);
 
     this.roomFocus = this.roomFocus.bind(this)
+    this.userName = this.userName.bind(this)
   }
 
   componentWillMount() {
-    console.log("componentWillMount(): ", this.state);
   }
 
   roomFocus(room) {
-    console.log("roomFocus():", this.state);
     if (room) {
-      console.log("have room param");
-      this.setState({room: room})
+      this.setState({
+        room: room,
+        username: null,
+      })
     }
     else {
-      console.log("don't have room param");
       return this.state.room
+    }
+  }
+
+  userName(username) {
+    if (username || username === null) {
+      this.setState({username: username})
+    }
+    else {
+      return this.state.username
     }
   }
 
@@ -53,6 +61,7 @@ class App extends Component {
             <img src={logo} className="App-logo" alt="logo" />
             <h1 className="App-title">Bloc Chat</h1>
           </header>
+          <User database={firebase} userName={this.userName}></User>
           <RoomList database={firebase} roomFocus={this.roomFocus}></RoomList>
         </div>
 
@@ -65,4 +74,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default App
