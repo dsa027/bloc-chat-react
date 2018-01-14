@@ -45,7 +45,7 @@ class RoomList extends React.Component {
     return (
       <div>
         <div id="new-room">
-          <input type="text" id="send-input" value={this.state.newRoomName}
+          <input type="text" value={this.state.newRoomName}
             onChange={(e) => this.handleNewRoomChange(e)} />
           <button type="button"
             className="new-room-button"

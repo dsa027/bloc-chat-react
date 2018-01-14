@@ -67,7 +67,10 @@ class App extends Component {
 
         {/* Right Column */}
         <div className="col_right">
-          <MessageList database={firebase} roomFocus={this.roomFocus}></MessageList>
+          <MessageList
+            database={firebase} roomFocus={this.roomFocus}
+            userName={this.userName}>
+          </MessageList>
         </div>
       </div>
     )
