@@ -7,6 +7,7 @@ class MessageList extends React.Component {
     super(props)
 
     this.state = {
+      room: '',
       messages: [],
       newMessage: '',
       udatedMessage: '',
@@ -14,7 +15,7 @@ class MessageList extends React.Component {
     }
 
     this.messagesRef = props.database.database().ref('messages')
-    this.getRoomMessages = this.getRoomMessages.bind(this)
+    // this.getRoomMessages = this.getRoomMessages.bind(this)
 
     this.roomMessages = []
 
@@ -66,10 +67,20 @@ class MessageList extends React.Component {
     })
   }
 
+  roomFocus(room) {
+    if (room) {
+      this.setState({ room: room})
+      return this.props.roomFocus(room)
+    }
+    else {
+      return this.props.roomFocus()
+    }
+  }
+
   getRoomMessages() {
-    if (this.props.roomFocus()) {
+    if (this.roomFocus()) {
       this.roomMessages = this.state.messages.filter(message => {
-        return message.val.roomId === this.props.roomFocus()
+        return message.val.roomId === this.roomFocus()
       })
     }
 
@@ -88,7 +99,7 @@ class MessageList extends React.Component {
     if (!this.state.newMessage) return
 
     const msg = {
-        roomId: this.props.roomFocus(),
+        roomId: this.roomFocus(),
         content: this.state.newMessage,
         sentAt: this.getTime(),
         username: this.props.userName(),
@@ -98,7 +109,6 @@ class MessageList extends React.Component {
   }
 
   handleUpdatedMessageClick(e) {
-    debugger
     if (!this.state.updatedMessage) return
 
     const ref = `messages/${this.roomMessages[this.editMessageIdx].key}`
@@ -158,13 +168,12 @@ class MessageList extends React.Component {
   }
 
   render() {
-    if (this.props.roomFocus()) {
+    if (this.roomFocus()) {
       Modal.setAppElement('#new-room')
       return (
         <div>
-          <h3 id="messages-title">{this.props.roomFocus()}</h3>
+          <h3 id="messages-title">Room: {this.roomFocus()}</h3>
           {this.getRoomMessages().map((message, index) => {
-            console.log(`row: ${message.key}-${message.val.content}`, message);
             return (
               <div key={`${message.key}-${message.content}`} className="zebra-stripe">
                 <span className="bolded">

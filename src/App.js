@@ -33,10 +33,8 @@ class App extends Component {
   }
 
   roomFocus(room) {
-    if (room) {
-      this.setState({
-        room: room,
-      })
+    if (room || room === '') {
+      this.setState({ room: room})
     }
     else {
       return this.state.room
@@ -68,7 +66,7 @@ class App extends Component {
         {/* Right Column */}
         <div className="col_right">
           <MessageList
-            database={firebase} roomFocus={this.roomFocus}
+            database={firebase} roomFocus={this.roomFocus} roomId={this.state.room}
             userName={this.userName}>
           </MessageList>
         </div>

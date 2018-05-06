@@ -10,7 +10,6 @@ class User extends React.Component {
   }
 
   signOnOff() {
-    console.log("signOnOff");
     if (this.state.signedOn) {
       this.props.database.auth().signOut()
       this.props.userName(null)
