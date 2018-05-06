@@ -1,4 +1,6 @@
 import React from 'react'
+import Ionicon from 'react-ionicons'
+import Modal from 'react-modal'
 
 class MessageList extends React.Component {
   constructor(props) {
@@ -7,11 +9,51 @@ class MessageList extends React.Component {
     this.state = {
       messages: [],
       newMessage: '',
+      udatedMessage: '',
+      isOpen: false,
     }
 
     this.messagesRef = props.database.database().ref('messages')
+    this.getRoomMessages = this.getRoomMessages.bind(this)
 
-    this.handleRoomClick = this.handleRoomClick.bind(this)
+    this.roomMessages = []
+
+    this.modalStyle = {
+      overlay : {
+        position          : 'fixed',
+        top               : '25%',
+        left              : '40%',
+        right             : 0,
+        bottom            : 0,
+        backgroundColor   : 'rgba(255, 255, 255, 0.75)',
+        height            : '325px',
+        width             : '350px'
+      },
+      content : {
+        position                   : 'absolute',
+        top                        : '40px',
+        left                       : '40px',
+        right                      : '40px',
+        bottom                     : '40px',
+        border                     : '1px solid #ccc',
+        background                 : '#fff',
+        overflow                   : 'auto',
+        WebkitOverflowScrolling    : 'touch',
+        borderRadius               : '4px',
+        outline                    : 'none',
+        padding                    : '20px'
+      }
+    }
+  }
+
+  modalOpen(bool) {
+    if (bool === true || bool === false) {
+      this.setState({isOpen: bool})
+    }
+    else {
+      this.setState({updatedMessage: ''})
+      return this.state.isOpen
+    }
   }
 
   componentDidMount() {
@@ -24,23 +66,25 @@ class MessageList extends React.Component {
     })
   }
 
-  handleRoomClick() {
-    let array = []
+  getRoomMessages() {
     if (this.props.roomFocus()) {
-      array = this.state.messages.filter(message => {
+      this.roomMessages = this.state.messages.filter(message => {
         return message.val.roomId === this.props.roomFocus()
       })
     }
 
-    if (!array) array = []
-    return array
+    return this.roomMessages || []
   }
 
-  handleMessageChange(e) {
+  handleNewMessageChange(e) {
     this.setState({newMessage: e.target.value})
   }
 
-  handleMessageClick() {
+  handleUpdatedMessageChange(e) {
+    this.setState({updatedMessage: e.target.value})
+  }
+
+  handleNewMessageClick() {
     if (!this.state.newMessage) return
 
     const msg = {
@@ -51,6 +95,30 @@ class MessageList extends React.Component {
     }
     this.messagesRef.push(msg)
     this.setState({newMessage: ''})
+  }
+
+  handleUpdatedMessageClick(e) {
+    debugger
+    if (!this.state.updatedMessage) return
+
+    const ref = `messages/${this.roomMessages[this.editMessageIdx].key}`
+    this.props.database.database().ref(ref).update({content: this.state.updatedMessage})
+
+    const idx = this.state.messages.findIndex((message) => {
+      return message.key === this.roomMessages[this.editMessageIdx].key
+    })
+    if (idx !== -1) {
+      const msgs = this.state.messages.slice()
+      msgs[idx].val.content = this.state.updatedMessage
+      this.setState({messages: msgs})
+    }
+
+    this.setState(
+      {
+        updatedMessage: '',
+        isOpen: false,
+      }
+    )
   }
 
   doubleDigit(number) {
@@ -71,34 +139,78 @@ class MessageList extends React.Component {
     )
   }
 
+  handleDeleteMessage(message, index) {
+    const key = message.key
+    this.messagesRef.child(key).remove()
+    const msgs = this.state.messages.slice()
+    msgs.splice(
+      msgs.findIndex(msg => {
+        return msg.key === key
+      }), 1
+    )
+    this.setState({messages: msgs})
+  }
+
+  handleEditMessage(message, index) {
+    this.editMessageIdx = index
+    this.setState({updatedMessage: message.val.content})
+    this.modalOpen(true)
+  }
+
   render() {
     if (this.props.roomFocus()) {
+      Modal.setAppElement('#new-room')
       return (
         <div>
           <h3 id="messages-title">{this.props.roomFocus()}</h3>
-          {this.handleRoomClick().map((message, index) => {
+          {this.getRoomMessages().map((message, index) => {
+            console.log(`row: ${message.key}-${message.val.content}`, message);
             return (
-              <div key={message.key} className="zebra-stripe">
+              <div key={`${message.key}-${message.content}`} className="zebra-stripe">
                 <span className="bolded">
-                  {message.val.username ? message.val.username : "Guest" }
+                  {message.val.username || "Guest" }
                 </span>
-                <span id="right-justify">{message.val.sentAt}</span>
+                <span className="right-justify">{message.val.sentAt}</span>
                 <br/>
                 <span>{message.val.content}</span>
+                <Ionicon className="right-justify" icon="md-trash" onClick={()=>this.handleDeleteMessage(message, index)}></Ionicon>
+                <Ionicon className="right-justify" icon="md-create" onClick={()=>this.handleEditMessage(message, index)}></Ionicon>
               </div>
             )
           })}
           <div id="send-message">
             <input
               type="text" id="send-input" value={this.state.newMessage}
-              onChange={(e) => this.handleMessageChange(e)}
+              onChange={(e) => this.handleNewMessageChange(e)}
             />
             <button
               id="send-button"
-              onClick={(e) => this.handleMessageClick(e)}>
+              onClick={(e) => this.handleNewMessageClick(e)}>
               Send
             </button>
           </div>
+          <Modal isOpen={this.state.isOpen} contentLabel={'Edit Message'} style={this.modalStyle} className="modal">
+            <div onClose={()=>this.modalOpen(false)} className="new-room">
+              <div className="modal-header">
+                <h3>Change Message</h3>
+              </div>
+              <div className="modal-body">
+                <span>
+                  Enter the new message:
+                  <br/>
+                  <input id="big-text-input" value={this.state.updatedMessage} type="text" onChange={(e)=>this.handleUpdatedMessageChange(e)}/>
+                </span>
+              </div>
+              <div className="modal-footer">
+                <button className="btn" onClick={()=>this.modalOpen(false)}>
+                  Cancel
+                </button>
+                <button className="btn btn-success" onClick={(e)=>this.handleUpdatedMessageClick(e)}>
+                  Ok
+                </button>
+              </div>
+            </div>
+          </Modal>
         </div>
       )
     }

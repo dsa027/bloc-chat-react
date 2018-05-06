@@ -22,6 +22,7 @@ class App extends Component {
 
     this.state = {
       room: '',
+      username: null,
     }
 
     this.roomFocus = this.roomFocus.bind(this)
@@ -35,7 +36,6 @@ class App extends Component {
     if (room) {
       this.setState({
         room: room,
-        username: null,
       })
     }
     else {
@@ -48,7 +48,7 @@ class App extends Component {
       this.setState({username: username})
     }
     else {
-      return this.state.username
+      return this.state.username || "Guest"
     }
   }
 

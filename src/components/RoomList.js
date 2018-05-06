@@ -1,4 +1,5 @@
 import React from 'react'
+import Ionicon from 'react-ionicons'
 
 class RoomList extends React.Component {
   constructor(props) {
@@ -55,13 +56,19 @@ class RoomList extends React.Component {
         </div>
 
         <div>
-          {this.state.rooms.map((room, index) => {
-            return (
-              <p id="each-room" key={room.key} onClick={() => this.handleRoomClick(index)}>
-                {room.val}
-              </p>
-            )
-          })}
+          <table><tbody>
+            {this.state.rooms.map((room, index) => {
+              return (
+                <tr key={room.key}>
+                  <td id="each-room" key={room.key} onClick={() => this.handleRoomClick(index)}>
+                    {room.val}
+                  </td>
+                  <td>&nbsp;&nbsp;&nbsp;<Ionicon icon="md-create" fontSize="18px" /></td>
+                  <td>&nbsp;<Ionicon icon="md-trash" fontSize="18px" /></td>
+                </tr>
+              )
+            })}
+          </tbody></table>
         </div>
       </div>
     )
