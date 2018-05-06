@@ -153,9 +153,8 @@ class RoomList extends React.Component {
     this.deleteMessages(room)
     const rms = this.state.rooms.slice()
     rms.splice(
-      rms.findIndex(rm => {
-        return rm.key === key
-      }), 1
+      rms.findIndex(rm => {return rm.key === key}), 
+      1
     )
     this.setState(
       {

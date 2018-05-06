@@ -66,18 +66,15 @@ class MessageList extends React.Component {
       this.setState({messages: this.state.messages.concat(message)})
     })
     this.messagesRef.on('child_removed', snapshot => {
-      const idx = this.state.messages.findIndex((msg) => {
-        return msg.key === snapshot.key
-      })
-      if (idx !== -1) {
-        this.setState({
-          messages: this.state.messages.splice(
-              this.state.messages.findIndex(msg => {
-                return msg.key === snapshot.key
-              }),
-              1
-        )})
-      }
+      const msgs = this.state.messages.slice()
+      msgs.splice(
+          this.state.messages.findIndex(msg => {
+            if (msg.key === snapshot.key) console.log("removed:", msg);
+            return msg.key === snapshot.key
+          }),
+          1
+      )
+      this.setState({messages: msgs})
     })
     this.messagesRef.on('child_changed', snapshot => {
       const idx = this.state.messages.findIndex((msg) => {
@@ -92,7 +89,7 @@ class MessageList extends React.Component {
   }
 
   roomFocus(room) {
-    if (room) {
+    if (room || room === '') {
       this.setState({ room: room})
       return this.props.roomFocus(room)
     }
@@ -176,13 +173,6 @@ class MessageList extends React.Component {
   handleDeleteMessage(message, index) {
     const key = message.key
     this.messagesRef.child(key).remove()
-    const msgs = this.state.messages.slice()
-    msgs.splice(
-      msgs.findIndex(msg => {
-        return msg.key === key
-      }), 1
-    )
-    this.setState({messages: msgs})
   }
 
   handleEditMessage(message, index) {
