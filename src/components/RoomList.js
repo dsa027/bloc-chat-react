@@ -91,9 +91,26 @@ class RoomList extends React.Component {
   handleUpdatedRoomClick(e) {
     if (!this.state.updatedRoomId) return
 
-    const ref = `rooms/${this.state.rooms[this.editRoomIdx].key}`
+    // db for messages
+    var ref = this.props.database.database().ref('messages')
+    const roomId = this.state.rooms[this.editRoomIdx].val.roomId
+    ref.on('child_added', snapshot => {
+      const message = {
+        val: snapshot.val(),
+        key: snapshot.key,
+      }
+      if (message.val.roomId === roomId) {
+        const msgRef = `messages/${message.key}`
+        const rm = this.state.updatedRoomId
+        this.props.database.database().ref(msgRef).update({roomId: rm})
+      }
+    })
+
+    // db for room
+    ref = `rooms/${this.state.rooms[this.editRoomIdx].key}`
     this.props.database.database().ref(ref).update({roomId: this.state.updatedRoomId})
 
+    // state
     const idx = this.state.rooms.findIndex((room) => {
       return room.key === this.state.rooms[this.editRoomIdx].key
     })
@@ -103,6 +120,7 @@ class RoomList extends React.Component {
       this.setState({rooms: rms})
     }
 
+    // state change
     this.props.roomFocus(this.state.updatedRoomId)
     this.setState(
       {
@@ -112,9 +130,29 @@ class RoomList extends React.Component {
     )
   }
 
+  deleteRoom(key) {
+    this.roomsRef.child(key).remove()
+  }
+
+  deleteMessages(room) {
+    var ref = this.props.database.database().ref('messages')
+    ref.on('child_added', snapshot => {
+      const message = {
+        val: snapshot.val(),
+        key: snapshot.key,
+      }
+      if (message.val.roomId === room.val.roomId) {
+        ref.child(message.key).remove()
+      }
+    })
+
+    this.props.roomFocus()
+  }
+
   handleDeleteRoom(room, index) {
     const key = room.key
-    this.roomsRef.child(key).remove()
+    this.deleteRoom(key)
+    this.deleteMessages(room)
     const rms = this.state.rooms.slice()
     rms.splice(
       rms.findIndex(rm => {

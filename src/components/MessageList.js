@@ -65,6 +65,30 @@ class MessageList extends React.Component {
       }
       this.setState({messages: this.state.messages.concat(message)})
     })
+    this.messagesRef.on('child_removed', snapshot => {
+      const idx = this.state.messages.findIndex((msg) => {
+        return msg.key === snapshot.key
+      })
+      if (idx !== -1) {
+        this.setState({
+          messages: this.state.messages.splice(
+              this.state.messages.findIndex(msg => {
+                return msg.key === snapshot.key
+              }),
+              1
+        )})
+      }
+    })
+    this.messagesRef.on('child_changed', snapshot => {
+      const idx = this.state.messages.findIndex((msg) => {
+        return msg.key === snapshot.key
+      })
+      if (idx !== -1) {
+        const msgs = this.state.messages.slice()
+        msgs[idx].val.roomId = snapshot.val().roomId
+        this.setState({messages: msgs})
+      }
+    })
   }
 
   roomFocus(room) {
