@@ -145,8 +145,6 @@ class RoomList extends React.Component {
         ref.child(message.key).remove()
       }
     })
-
-    this.props.roomFocus()
   }
 
   handleDeleteRoom(room, index) {
