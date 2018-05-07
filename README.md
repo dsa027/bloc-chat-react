@@ -4,8 +4,7 @@ summary: A Web-based, SPA chat room application written in React
 tech: React, Firebase, Node.js, JavaScript, HTML/CSS, Ion Icons, Heroku, GitHub
 ---
 [1]: https://bloc-chat-react-dsa027.herokuapp.com/
-[2]: /assets/img/posts/bloc_chat_react_logo_thumb.png
-[![Heroku Site][2]][1]
+[[Heroku Site][1]
 
 # Summary
 
